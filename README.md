@@ -1,12 +1,16 @@
 # Podcast Promo Maker
+Dennis Eckmeier, 2018
+
 The Podcast Promo Maker V0.0.4 creates a simple promo video for a podcast for 
 social media. The output is formatted and encoded so it fits recommendations 
 by Facebook, Twitter, and Instagram (also works for Pinterest):
+
     - max duration 60 s
     - video: MP4 (H.264), 30 fps, 1024k bitrate, 640x640 Px
     - audio: AAC (Low Complexity), 64k mono, 128k stereo
 
-Dependencies:
+## Dependencies:
+
     - Python 3.7
     - FFMpeg (added to PATH)
     - numpy
@@ -16,36 +20,56 @@ Dependencies:
 
 Developed under Windows 10
 
-Created on Thu Aug 23 17:31:12 2018
-@author: Dennis Eckmeier
-
-# Settings
+## Settings
 In the script file you will find the following section, some of which you need to modify, some of which you may modify, and some of which you should not touch:
 
-audio = {'filename':'outro.wav',                         # HERE GOES THE NAME OF THE INPUT AUDIO FILE (must be WAV)
-         'volume':'14dB',                                YOU MAY CHANGE THE VOLUME IF YOU LIKE
-         'bitrate':'128k',                               DON'T CHANGE (social media compliance)  
-         'codec':'aac'}                                  DON'T CHANGE (social media compliance)
+***audio*** settings dictionary:
+--------------------------------------------------------------------------
+**filename** key:   **name of the source wav file**
+    
+**volume** key:     volume of the sound output (default: '14dB')
+    
+*bitrate* key:      sound compression (default: '128k')
+    
+*codec* key:        sound codec (default:'aac')
 
-bkg_filename = 'tardi.png'
-au_plot = {'height':60,'Ypos':560,'nChan':1}             CHANGE POSITION AND HEIGHT OF THE AUDIO WAVE PLOT
-new_vid = {'filename':'sfp_podcast.mp4',                 # HERE GOES THE NAME OF THE *OUTPUT* FILE
-           'fps':30,                                     DON'T CHANGE (social media compliance)  
-           'size':[640,640],                             DON'T CHANGE (social media compliance)  
-           'dpi':150,                                    DON'T CHANGE (social media compliance)  
-           'codec':'h264',                               DON'T CHANGE (social media compliance)  
-           'bitrate':1024}                               DON'T CHANGE (social media compliance)  
+--------------------------------------------------------------------------
+***bkg_filename***      **name of the background image file**
 
-metadata = dict(title='Movie Test',                      # YOU SHOULD ADJUST YOUR VIDEO METADATA
-                artist='Matplotlib',
-                comment='Movie support!')
-text_p = {'xpos':320,                                    # TEXT POSITION
-          'ypos':10,
-          'text':'Science for Societal Progress',        # TEXT
-          'color':'w',                                   # COLOR AND FORMATTING:
-          'fontname':'Arial',
-          'weight':'heavy',
-          'size':'18',
-          'horizontalalignment':'center',
-          'verticalalignment':'top'}
+--------------------------------------------------------------------------
 
+***au_plot*** dictionary (settings for the audio wave plots):
+--------------------------------------------------------------------------
+**height** key:     height of the wave plot in the image
+
+**Ypos** key:       Position of plot origin along the **inverted y axis**
+
+*nChan*:            number of channels to plot (doesn't do anything atm)
+
+--------------------------------------------------------------------------
+
+***new_vid*** dictionary:
+--------------------------------------------------------------------------
+**filename** key:   **name of the output file**
+*fps* key:          output video frame rate (default:30)
+*size* key:         output dimension in px: (default: [640,640])
+*dpi* key:          figure resolution (default:150)
+*codec* key:        output video mp3 codec (default:'h264')
+*bitrate* key:      output video compression bitrate (default:1024)
+
+--------------------------------------------------------------------------
+
+***metadata***
+--------------------------------------------------------------------------
+**title** key:      The title of the episode.
+**artist** key:     your name
+**comment** key:    Your opportunity to mention Podcast Promo Maker!
+
+--------------------------------------------------------------------------
+***text_p*** dictionary
+--------------------------------------------------------------------------
+**xpos** and **ypos** keys:  x and y position of the text **(inverted y axis!)**
+**text** key:        the text.
+**color**, **fontname**, **weight**, **size, **horizontalalignment**, and **verticalalignment** are formatting settings (see matplotlib.pyplot.text())
+
+--------------------------------------------------------------------------
