@@ -51,10 +51,15 @@ In the script file you will find the following section, some of which you need t
 ***new_vid*** dictionary:
 --------------------------------------------------------------------------
 **filename** key:   **name of the output file**
+
 *fps* key:          output video frame rate (default:30)
+
 *size* key:         output dimension in px: (default: [640,640])
+
 *dpi* key:          figure resolution (default:150)
+
 *codec* key:        output video mp3 codec (default:'h264')
+
 *bitrate* key:      output video compression bitrate (default:1024)
 
 --------------------------------------------------------------------------
@@ -62,14 +67,18 @@ In the script file you will find the following section, some of which you need t
 ***metadata***
 --------------------------------------------------------------------------
 **title** key:      The title of the episode.
+
 **artist** key:     your name
+
 **comment** key:    Your opportunity to mention Podcast Promo Maker!
 
 --------------------------------------------------------------------------
 ***text_p*** dictionary
 --------------------------------------------------------------------------
 **xpos** and **ypos** keys:  x and y position of the text **(inverted y axis!)**
+
 **text** key:        the text.
+
 **color**, **fontname**, **weight**, **size, **horizontalalignment**, and **verticalalignment** are formatting settings (see matplotlib.pyplot.text())
 
 --------------------------------------------------------------------------
