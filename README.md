@@ -2,7 +2,6 @@
 The Podcast Promo Maker V0.0.4 creates a simple promo video for a podcast for 
 social media. The output is formatted and encoded so it fits recommendations 
 by Facebook, Twitter, and Instagram (also works for Pinterest):
-
     - max duration 60 s
     - video: MP4 (H.264), 30 fps, 1024k bitrate, 640x640 Px
     - audio: AAC (Low Complexity), 64k mono, 128k stereo
