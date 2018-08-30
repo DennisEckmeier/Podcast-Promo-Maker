@@ -1,0 +1,57 @@
+
+
+
+Podcast Promo Maker
+
+-c <imports the indicated settings file> (default: 'default_config')
+	example: You stored a copy of 'default_config.py' in 'me_defaults.py',
+		 and adjusted the options. Using
+                 > PodcastPromoMaker.py -c my_defaults
+                 will load your own defaults instead of the standard defaults.
+
+Mandatory Arguments:
+====================
+-a 		<input audio file>
+-b 		<input background image>
+-t		<episode title>
+-v 		<output file name>
+
+Audio Visualization:
+====================
+-ap_height 	<height of plot in px> (default = 60)
+-ap_Y      	<y position in px from bottom> (default = 560)
+-ap_nChan  	<number of channels to display> (default = 1)
+-ap_style       <choose visualization style>
+
+Text Position and Formatting:
+=============================
+-t_X		<x position> (default = 320)
+-t_Y		<y position from bottom> (default = 10px) 
+-t_col		<color> (default = 'w')
+-t_fnt		<fontname> (default = 'arial')
+-t_wt		<font weight> (default = 'heavy')
+-t_sz		<font size> (default = 18)
+-t_horizontal 	<horizontal alignment> (default = 'center')
+-t_vertical   	<vertical alignment> (default = 'top')
+
+Output Video Metadata:
+======================
+-md_title 	(default: 'Science for Progress Promo')
+-md_artist 	(default: 'Dennis Eckmeier')
+-md_comment	(default: 'www.scienceforprogress.eu')
+
+Compression and Formatting Settings (should not be changed!)
+===========================================================
+-a_vol 		<audio volume> (default='12dB')
+-a_bit 		<audio bitrate> (default='128k')
+-a_cod 		<audio codec> (default='aac')
+-v_fps 		<video framerate) (default='30')
+-v_fht		<video frame height in px) (default=640)
+-v_fwd		<video frame width in px) (default=640)
+-v_dpi 		<internally use for window sizing> (default = 150)
+-v_cod 		<video codec> (default = 'h264')
+-v_bit 		<video compression bitrate> (default = 1024)
+
+-----------------------------------------------------------
+by Dennis Eckmeier, 2018
+https://github.com/DennisEckmeier/Podcast-Promo-Maker
