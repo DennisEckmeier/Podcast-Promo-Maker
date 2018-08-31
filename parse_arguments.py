@@ -19,7 +19,10 @@ def config_section_values(section,config):
             try:
                 dict1[option] = int(dict1[option])        
             except:
-                False
+                try:
+                    dict1[option] = float(dict1[option])
+                except:
+                    False
         except:
             print("exception on %s!" % option)
             dict1[option] = None
@@ -60,8 +63,6 @@ def parse_arguments(argv):
     metadata = config_section_values("metadata",config)
     text_p = config_section_values("text_p",config)
     
-    exec(open("{}.py".format(conf_file)).read())
-
     # applying other settings:
     for opt, arg in opts:
         if opt in ("-a"): 		    #<input audio file>

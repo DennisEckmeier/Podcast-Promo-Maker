@@ -34,9 +34,6 @@ from subprocess import call
 import os
 import sys
 import numpy as np
-import scipy.signal as sci
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
 from matplotlib.animation import FFMpegWriter
 from PIL import Image
 import audio_load_functions as ppm_alf
@@ -49,7 +46,7 @@ def read_sound_file(audio):
     audio = ppm_alf.get_audio_wave(audio)
     return audio
 
-def getBackGroundImage(bkg_filename,new_vid):
+def get_background_image(bkg_filename,new_vid):
     img_obj = Image.open(bkg_filename)
     i = np.argmin(np.abs(np.subtract(img_obj.size,tuple(new_vid['size']))))
     nwidth,nheight = new_vid['size']
@@ -67,79 +64,48 @@ def getBackGroundImage(bkg_filename,new_vid):
 # def anim_init(): - for later use
 
 
-def anim_update(tframe, au_plot, audio, new_vid,ln1,ln2):
-    print('{:.0f} % complete  '.format(tframe/new_vid['nFrames']*100), end='\r')
-#    print('frame: {}      '.format(tframe), end='\r')
-    au_start = int(round(tframe * au_plot['ind_trans_const']))
-    au_end   = int(round(((tframe+1) * au_plot['ind_trans_const']) - 1))
-    
-    if au_end > audio['nSamples']:
-        au_end = audio['nSamples']
-    
-    tChanHeight = au_plot['height']/au_plot['n_chan']
-        
-    # Channel1
-    au_wave = audio['wave'][range(au_start,au_end),0]
-    au_wave = sci.resample(au_wave, new_vid['size'][1])*tChanHeight
-    ln1.set_data(list(range(1, new_vid['size'][1]+1)), au_wave+au_plot['ypos'])
-    # Channel2
-    if audio['nChannels'] == 1:
-        au_wave = au_wave+tChanHeight
-    else:
-        au_wave = audio['wave'][range(au_start,au_end),1]
-        au_wave = sci.resample(au_wave, new_vid['size'][1])
-        au_wave = au_wave*tChanHeight
-    ln2.set_data(list(range(1,new_vid['size'][1]+1)), au_wave+au_plot['ypos']+tChanHeight)
-    return ln1,ln2
 # --
 def podcast_promo_maker(audio, bkg_filename,au_plot,new_vid,metadata,text_p):
     """
     Main function
     """
-    # default values:
-
-    # ---
-    # PREPARE DATA
+    
+#    
+#   PREPARING INPUTS
+#    
     audio = read_sound_file(audio)
     new_vid['nFrames'] = int(np.ceil((np.size(audio['wave'])/audio['rate']/audio['nChannels'])*new_vid['fps']))
     au_plot['ind_trans_const'] = (1/new_vid['fps']) * audio['rate']
+    im_bkg = get_background_image(bkg_filename,new_vid);
     
     if new_vid['nFrames']/new_vid['fps'] > 60:
         print('Sound is too long. Video will be cut at 60s')
         new_vid['nFrames'] = 60*new_vid['fps']
-    
-    # INITIALIZE FIGURE
-    fig = plt.figure(dpi=new_vid['dpi'], figsize=[x/new_vid['dpi'] for x in new_vid['size']])
-    plt.imshow(getBackGroundImage(bkg_filename,new_vid),origin='upper')
-    plt.text(text_p['xpos'],
-             text_p['ypos'],
-             text_p['text'],
-             color = text_p['color'],
-             fontname = text_p['fontname'],
-             weight = text_p['weight'],
-             size = text_p['size'],
-             horizontalalignment=text_p['horizontalalignment'],
-             verticalalignment=text_p['verticalalignment'])
-    fig.add_subplot(111)
-    ln1, = plt.plot([], [], 'r', animated=True)
-    ln2, = plt.plot([], [], 'r', animated=True)
-    plt.axis('off')
-    plt.subplots_adjust(left=0, bottom=0, right=1, top=1, wspace=0, hspace=0)
-    #
-    # RUN ANIMATION
-    #
-    writer = FFMpegWriter(fps=new_vid['fps'], codec=new_vid['codec'], bitrate=new_vid['bitrate'], metadata=metadata)
-    
-    ani = FuncAnimation(fig,
-                        anim_update,
-                        frames=new_vid['nFrames'],
-                        fargs=(au_plot, audio, new_vid,ln1,ln2),
-                        blit=True,
-                        repeat=False)
-    
-    ani.save('temp_video.mp4', writer=writer,dpi=new_vid['dpi'])
+        #FIX ME: move check into read_sound_file and cut the audio data there!
+        
 #    
-#    # ADD THE SOUND
+#   MAKE ANIMATION
+#
+        # choosing the audio visualization style:
+    if au_plot['style'] == 'simple_wave':
+        import anim_simple_wave as a
+    elif au_plot['style'] == 'simple_fbars':
+        import anim_simple_frequency_bars as a
+        
+        # make animation
+    ani=a.run_animation(audio,au_plot,new_vid,im_bkg,text_p)
+    
+#
+#   SAVE ANIMATION AS VIDEO
+#
+    writer = FFMpegWriter(fps=new_vid['fps'], 
+                          codec=new_vid['codec'], 
+                          bitrate=new_vid['bitrate'], 
+                          metadata=metadata)
+    ani.save('temp_video.mp4', writer=writer,dpi=new_vid['dpi'])
+    
+#    
+#    ADD THE SOUND
 #    
     print('converting wav to mp3 ...')
     cmd = 'ffmpeg -y -i {} -shortest temp_audio.mp3'.format(audio['filename'])
@@ -147,13 +113,13 @@ def podcast_promo_maker(audio, bkg_filename,au_plot,new_vid,metadata,text_p):
     
     print('combining video and audio ...')
     cmd = 'ffmpeg -y -i temp_video.mp4 -i temp_audio.mp3 -filter:a "volume={}"  -c:v {}  -c:a {} -b:a {} -shortest {}'.format(audio['volume'],new_vid['codec'],audio['codec'],audio['bitrate'],new_vid['filename'])
-    call(cmd, shell=True)     
+    call(cmd, shell=False)     
     
     os.remove('temp_audio.mp3')
     os.remove('temp_video.mp4')
-
-# END FUNCTIONS
-
-audio, bkg_filename,au_plot,new_vid,metadata,text_p = parse_arguments(sys.argv[1:])
     
+# END OF FUNCTIONS ------------------------------------------
+
+# RUN
+audio, bkg_filename,au_plot,new_vid,metadata,text_p = parse_arguments(sys.argv[1:])  
 podcast_promo_maker(audio, bkg_filename,au_plot,new_vid,metadata,text_p)

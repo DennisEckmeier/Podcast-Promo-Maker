@@ -19,5 +19,6 @@ def get_audio_wave(audio):
         audio['nSamples'], audio['nChannels'] = audio['wave'].shape
         
     audio['wave'] = audio['wave'] / np.max(np.abs(audio['wave']))
+    
     return audio
 

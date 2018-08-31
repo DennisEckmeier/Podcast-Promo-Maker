@@ -4,7 +4,7 @@
 Podcast Promo Maker
 
 -c <imports the indicated settings file> (default: 'default_config')
-	example: You stored a copy of 'default_config.py' in 'me_defaults.py',
+	example: You stored a copy of 'default_config.ini' in 'my_defaults.ini',
 		 and adjusted the options. Using
                  > PodcastPromoMaker.py -c my_defaults
                  will load your own defaults instead of the standard defaults.
@@ -15,6 +15,8 @@ Mandatory Arguments:
 -b 		<input background image>
 -t		<episode title>
 -v 		<output file name>
+
+## The following don't work, yet, but can altered using a custom ini file ##
 
 Audio Visualization:
 ====================
