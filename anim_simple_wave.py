@@ -24,7 +24,12 @@ def anim_update(tframe, au_plot, audio, new_vid,ln1,ln2):
     tChanHeight = au_plot['height']/au_plot['n_chan']
         
     # Channel1
-    au_wave = audio['wave'][range(au_start,au_end),0]
+    if audio['nChannels'] == 1:
+        au_wave = audio['wave'][range(au_start,au_end)] 
+    else:
+    # FIX ME in stereo files, this should be an average of channel 1 and 2
+        au_wave = audio['wave'][range(au_start,au_end),0] 
+        
     au_wave = sci.resample(au_wave, new_vid['size'][1])*tChanHeight
     ln1.set_data(list(range(1, new_vid['size'][1]+1)), au_wave+au_plot['ypos'])
     # Channel2

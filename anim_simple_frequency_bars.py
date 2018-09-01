@@ -51,7 +51,11 @@ def prep_ttf(audio,new_vid,au_plot):
         if au_end > audio['nSamples']:
             au_end = audio['nSamples']
         
-        au_wave = audio['wave'][range(au_start,au_end),0]
+        if audio['nChannels'] == 1:
+            au_wave = audio['wave'][range(au_start,au_end)] 
+        else:
+            # FIX ME in stereo files, this should be an average of channel 1 and 2
+            au_wave = audio['wave'][range(au_start,au_end),0] 
         N = len(au_wave) # Number of samplepoints
         yf = scipy.fftpack.fft(au_wave)
         yf = 2.0/N * np.abs(yf[:N//2])    
