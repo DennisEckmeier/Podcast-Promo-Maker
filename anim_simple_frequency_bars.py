@@ -18,15 +18,16 @@ def anim_update(tframe,y_all,bars,new_vid):
     print('{:.0f} % complete  '.format(tframe/new_vid['nFrames']*100), end='\r')
     y_binned = y_all[tframe,:]
     for i, tb in enumerate(bars):
-        tb.set_height((y_binned[i]/np.max(y_binned)*30))
+        tb.set_height(y_binned[i])
     return bars
     
 def initialize_figure(new_vid,im_bkg,text_p,au_plot):
+    nbars= au_plot['nbars']
     fig = fini.fig_init(new_vid,im_bkg,text_p)
     ax = fig.add_subplot(111)
-    barwidth = new_vid['width']/au_plot['nbars']
+    barwidth = new_vid['width']/nbars
     barpos   = list(np.arange(0,new_vid['width'],barwidth))
-    bars = plt.bar(barpos,np.zeros(au_plot['nbars']), 
+    bars = plt.bar(barpos,np.zeros(nbars), 
                    bottom=au_plot['ypos'], 
                    width=barwidth*au_plot['barwidth'], 
                    align="edge",
@@ -36,13 +37,15 @@ def initialize_figure(new_vid,im_bkg,text_p,au_plot):
     return fig, ax, bars
 
 def prep_ttf(audio,new_vid,au_plot):
+    nbars= au_plot['nbars']+1
     N = au_plot['ind_trans_const']
     T = 1/audio['rate']
     xf = np.linspace(0.0, 1.0/(2.0*T), N/2)
-    cutoff = bisect.bisect(xf,10000)
+    cutoff = bisect.bisect(xf,5000)
     xf = xf[range(0, cutoff)]
-    xf = np.power(list(range(1,len(xf)+1)),(1/3))
-    y_all = np.zeros([new_vid['nFrames'],au_plot['nbars']],'float')
+#    xf = np.power(list(range(1,len(xf)+1)),(1/3))
+    xf = list(range(1,len(xf)+1))
+    y_all = np.zeros([new_vid['nFrames'],nbars],'float')
     y_max = 0
     for tframe in range(0,new_vid['nFrames']):
         au_start = int(round(tframe * au_plot['ind_trans_const']))
@@ -59,9 +62,9 @@ def prep_ttf(audio,new_vid,au_plot):
         N = len(au_wave) # Number of samplepoints
         yf = scipy.fftpack.fft(au_wave)
         yf = 2.0/N * np.abs(yf[:N//2])    
-        tr = (list(np.arange(1,np.max(xf),np.max(xf)/au_plot['nbars'])))
-        y_binned = np.zeros(au_plot['nbars'])
-        for i in range(0,len(tr)-1):
+        tr = (list(np.arange(1,np.max(xf),np.max(xf)/nbars)))
+        y_binned = np.zeros(nbars)
+        for i in range(0,au_plot['nbars']):
             a = np.argmin(abs(xf - tr[i]  ))
             b = np.argmin(abs(xf - tr[i+1]))
             if b > len(yf)-1:
@@ -72,8 +75,14 @@ def prep_ttf(audio,new_vid,au_plot):
             
         y_all[tframe,:] = y_binned
     
+    y_all = y_all[:,:-1]
     y_all = (y_all / y_max) * au_plot['height']
-    return y_all
+    
+    # normalize each bar for more interesting visuals
+    bar_maxes = np.max(y_all,axis=0)
+    y_all_n =  (y_all / bar_maxes[np.newaxis,:]) * au_plot['height']
+         
+    return y_all_n
 
 def run_animation(audio,au_plot,new_vid,im_bkg,text_p):
     

@@ -112,7 +112,8 @@ def podcast_promo_maker(audio, bkg_filename,au_plot,new_vid,metadata,text_p):
     call(cmd, shell=True)     
     
     print('combining video and audio ...')
-    cmd = 'ffmpeg -y -i temp_video.mp4 -i temp_audio.mp3 -filter:a "volume={}"  -c:v {}  -c:a {} -b:a {} -shortest {}'.format(audio['volume'],new_vid['codec'],audio['codec'],audio['bitrate'],new_vid['filename'])
+    # -filter:a "volume={}" ... audio['volume'],
+    cmd = 'ffmpeg -y -i temp_video.mp4 -i temp_audio.mp3   -c:v {}  -c:a {} -b:a {} -shortest {}'.format(new_vid['codec'],audio['codec'],audio['bitrate'],new_vid['filename'])
     call(cmd, shell=False)     
     
     os.remove('temp_audio.mp3')
